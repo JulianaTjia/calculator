@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Calculator</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+
+        .calculator {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #display {
+            width: 95%;
+            height: 50px;
+            text-align: right;
+            margin-bottom: 10px;
+            font-size: 2em;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        button {
+            padding: 20px;
+            font-size: 1.5em;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff7cc;
+            cursor: pointer;
+        }
+
+        button.operator {
+            background-color: #9e2194;
+            color: white;
+        }
+
+        button#clear {
+            background-color: #351cc0;
+            color: white;
+        }
+
+        button#equals {
+            background-color: #34c759;
+            color: white;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <input type="text" id="display" disabled>
+        <div class="buttons">
+            <button id="clear">C</button>
+            <button class="operator" value="sqrt">√</button>
+            <button class="operator" value="^">^</button>
+            <button class="operator" value="/">/</button>
+            <button value="7">7</button>
+            <button value="8">8</button>
+            <button value="9">9</button>
+            <button class="operator" value="*">*</button>
+            <button value="4">4</button>
+            <button value="5">5</button>
+            <button value="6">6</button>
+            <button class="operator" value="-">-</button>
+            <button value="1">1</button>
+            <button value="2">2</button>
+            <button value="3">3</button>
+            <button class="operator" value="+">+</button>
+            <button id="backspace">⌫</button>
+            <button value=".">.</button>
+            <button value="0">0</button>
+            <button id="equals">=</button>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            let display = $('#display');
+            let currentInput = '';
+            let operator = '';
+            let operand1 = null;
+            let operand2 = null;
+            let resultDisplayed = false; 
+
+            $('button').on('click', function() {
+                let value = $(this).val();
+
+                if ($(this).attr('id') === 'clear') {
+                    // hapus semua variabel dan tampilan
+                    display.val('');
+                    currentInput = '';
+                    operator = '';
+                    operand1 = null;
+                    operand2 = null;
+                    resultDisplayed = false;
+                } else if ($(this).attr('id') === 'equals') {
+                    operand2 = parseFloat(currentInput);
+                    if (operator && operand1 !== null) {
+                        let result;
+                        switch(operator) {
+                            case '+':
+                                result = operand1 + operand2;
+                                break;
+                            case '-':
+                                result = operand1 - operand2;
+                                break;
+                            case '*':
+                                result = operand1 * operand2;
+                                break;
+                            case '/':
+                                result = operand1 / operand2;
+                                break;
+                            case '^':
+                                result = Math.pow(operand1, operand2);
+                                break;
+                        }
+                        display.val(result);
+                        currentInput = result.toString();
+                        operator = '';
+                        operand1 = result;
+                        operand2 = null;
+                        resultDisplayed = true; 
+                    }
+                } else if ($(this).attr('id') === 'backspace') {
+                    // Hapus karakter terakhir dari currentInput
+                    if (!resultDisplayed) {
+                        currentInput = currentInput.slice(0, -1);
+                        display.val(currentInput);
+                    }
+                } else if ($(this).hasClass('operator')) {
+                    if (value === 'sqrt') {
+                        let result = Math.sqrt(parseFloat(currentInput));
+                        display.val(result);
+                        currentInput = result.toString();
+                        resultDisplayed = true;
+                    } else {
+                        operator = value;
+                        operand1 = parseFloat(currentInput);
+                        currentInput = '';
+                        resultDisplayed = false;
+                    }
+                } else {
+                    // Tambahkan nilai ke currentInput dan perbarui tampilan
+                    if (resultDisplayed) {
+                        // Mulai input baru jika hasil telah ditampilkan
+                        currentInput = value;
+                        resultDisplayed = false;
+                    } else {
+                        currentInput += value;
+                    }
+                    display.val(currentInput);
+                }
+            });
+        });
+      </script>
+</body>
+</html>
